@@ -8,21 +8,13 @@ WorkflowGuard checks every workflow in a repository. [DiffShield](https://github
 
 Python 3.11 or newer is required.
 
-Download the current wheel from the repository and install the downloaded file:
+Download the wheel from the [latest GitHub release](https://github.com/GhosTnever-lkm/workflowguard/releases/latest) and install the downloaded file:
 
 ```console
-python -m pip install workflowguard-1.0.0-py3-none-any.whl
+python -m pip install workflowguard-1.0.1-py3-none-any.whl
 ```
 
-Or download [the source bundle](https://github.com/GhosTnever-lkm/workflowguard/blob/main/WorkflowGuard-Source-v1.0.0.zip), extract it, and run the checkout instructions below.
-
-When a release is tagged, use its release assets for stable, versioned downloads.
-
-To install from PyPI after the package is published there:
-
-```console
-python -m pip install workflowguard
-```
+The release also includes a source bundle. Extract it and follow the checkout instructions below to install from source.
 
 To install from a checkout:
 
@@ -64,7 +56,9 @@ workflowguard scan ".github/workflows/build and release.yml"
 
 Action tags such as `@v4` are convenient but can move. WorkflowGuard recommends a verified full commit SHA; keep a version comment beside it for readability. The scanner is intentionally conservative and does not claim to prove a workflow safe.
 
-## GitHub Actions example
+## GitHub Actions example (CLI)
+
+WorkflowGuard is a CLI, not a published GitHub Action. Install the CLI in a job and run it against the checked-out repository:
 
 ```yaml
 name: Workflow security
@@ -78,16 +72,17 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@<verified-40-character-commit-sha> # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: GhosTnever-lkm/workflowguard-action@<verified-40-character-commit-sha>
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          path: .
-          fail-on: error
+          python-version: '3.12'
+      - run: python -m pip install https://github.com/GhosTnever-lkm/workflowguard/releases/download/v1.0.1/workflowguard-1.0.1-py3-none-any.whl
+      - run: workflowguard scan . --format sarif --output workflowguard.sarif --fail-on error
 ```
 
-WorkflowGuard currently ships as a local CLI. The snippet shows the intended setup shape; the hosted Action reference is not published yet.
+The example installs the versioned wheel from GitHub Releases. The command writes a SARIF report; add an artifact upload step if you need to download that report from the run.
 
 ## Output and privacy
 
@@ -115,3 +110,22 @@ pytest -q
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+<details>
+<summary>Public wallet addresses</summary>
+
+Send only assets on the matching network.
+
+| Network | Address |
+|:--|:--|
+| Bitcoin | `bc1qn75pj4n7gyl2k5kf2f97elvyenz52q6nn2g30u` |
+| TRON | `TCBSy38X57hA6w2onJcxom24x1febc1mP1` |
+| BNB Smart Chain | `0xD431a917961E0b086B96D9F72b5C8fF19b19068a` |
+
+</details>
+
+## Support / Pro Version
+
+WorkflowGuard CLI is free and MIT-licensed. The optional [WorkflowGuard Pro Kit on Boosty](https://boosty.to/azizazimov/posts/5c87f36c-8306-462e-85a8-a4facd470adb) is a separate 50 ₽ pack of starter workflow templates and release checklists; it does not unlock hidden CLI features.
+
+You can also support development through [Buy Me a Coffee](https://buymeacoffee.com/azizazimov8) or [Boosty](https://boosty.to/azizazimov).
