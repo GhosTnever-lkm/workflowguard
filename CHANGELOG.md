@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 — 2026-10-11
+
+- Keep generated wheel and source ZIP out of the Git checkout; distribute them as versioned release assets instead.
+- Refresh installation examples to v1.0.2.
+
 ## 1.0.1 — 2026-10-08
 
 - Corrected release installation instructions and replaced the unpublished Action example with a real CLI workflow.

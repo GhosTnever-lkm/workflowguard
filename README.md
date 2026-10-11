@@ -11,7 +11,7 @@ Python 3.11 or newer is required.
 Download the wheel from the [latest GitHub release](https://github.com/GhosTnever-lkm/workflowguard/releases/latest) and install the downloaded file:
 
 ```console
-python -m pip install workflowguard-1.0.1-py3-none-any.whl
+python -m pip install workflowguard-1.0.2-py3-none-any.whl
 ```
 
 The release also includes a source bundle. Extract it and follow the checkout instructions below to install from source.
@@ -78,7 +78,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - run: python -m pip install https://github.com/GhosTnever-lkm/workflowguard/releases/download/v1.0.1/workflowguard-1.0.1-py3-none-any.whl
+      - run: python -m pip install https://github.com/GhosTnever-lkm/workflowguard/releases/download/v1.0.2/workflowguard-1.0.2-py3-none-any.whl
       - run: workflowguard scan . --format sarif --output workflowguard.sarif --fail-on error
 ```
 

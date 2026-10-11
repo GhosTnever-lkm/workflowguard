@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "workflowguard"
-version = "1.0.1"
+version = "1.0.2"
 description = "Offline security checks for GitHub Actions workflows"
 readme = "README.md"
 requires-python = ">=3.11"
