@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 — 2026-10-11
+
+- CI now also runs the test suite on Windows (windows-latest), not only Ubuntu.
+
+
 ## 1.0.2 — 2026-10-11
 
 - Keep generated wheel and source ZIP out of the Git checkout; distribute them as versioned release assets instead.
