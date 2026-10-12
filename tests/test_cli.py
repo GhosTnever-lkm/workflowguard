@@ -1,6 +1,8 @@
 import json
+import tomllib
 from pathlib import Path
 
+from workflowguard import __version__
 from workflowguard.cli import main
 
 
@@ -15,6 +17,27 @@ def test_error_gate_exits_one_only_for_error(tmp_path: Path, capsys):
     repo = make_repo(tmp_path, "on: push\njobs: {}\n")
     assert main(["scan", str(repo), "--fail-on", "error"]) == 0
     assert "WFG001" in capsys.readouterr().out
+
+
+def test_version_option_matches_package_version(capsys):
+    try:
+        main(["--version"])
+    except SystemExit as error:
+        assert error.code == 0
+    assert capsys.readouterr().out.strip() == f"workflowguard {__version__}"
+
+
+def test_cli_version_matches_project_metadata():
+    project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+    assert __version__ == project["project"]["version"]
+
+
+def test_readme_install_examples_match_current_release():
+    project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+    version = project["project"]["version"]
+    readme = Path("README.md").read_text(encoding="utf-8")
+    assert f"workflowguard-{version}-py3-none-any.whl" in readme
+    assert f"releases/download/v{version}/workflowguard-{version}-py3-none-any.whl" in readme
 
 
 def test_warning_gate_exits_one_for_warning(tmp_path: Path, capsys):

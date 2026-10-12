@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4 — 2026-10-12
+
+- Publish reproducible wheel and source ZIP assets with SHA-256 checksums automatically for each version tag.
+- Update wheel-install examples to the latest release and add a `--version` CLI option.
+- Keep the package metadata and CLI version aligned.
+
 ## 1.0.3 — 2026-10-11
 
 - CI now also runs the test suite on Windows (windows-latest), not only Ubuntu.

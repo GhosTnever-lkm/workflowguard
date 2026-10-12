@@ -4,12 +4,14 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import __version__
 from .renderers import render_json, render_sarif, render_text
 from .scanner import InputError, scan
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="workflowguard", description="Offline GitHub Actions workflow security checks.")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
     command = subparsers.add_parser("scan", help="scan workflow YAML files")
     command.add_argument("path", nargs="?", default=".", help="repository root, workflow directory, or one workflow file")
