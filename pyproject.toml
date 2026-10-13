@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<9"]
+dev = ["pytest>=9.1.1,<10"]
 
 [project.scripts]
 workflowguard = "workflowguard.cli:main"
