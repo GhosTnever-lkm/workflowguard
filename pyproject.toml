@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "GhosTnever" }]
-dependencies = ["PyYAML>=6.0.2,<7"]
+dependencies = ["PyYAML>=6.0.3,<7"]
 classifiers = [
   "Environment :: Console",
   "Intended Audience :: Developers",
