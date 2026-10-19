@@ -47,21 +47,33 @@ def _construct_unknown_tag(loader: GithubSafeLoader, _suffix: str, node: Node) -
 GithubSafeLoader.add_multi_constructor("!", _construct_unknown_tag)
 
 
-def _check_duplicate_keys(node: Node) -> None:
-    if isinstance(node, MappingNode):
-        keys: set[tuple[str, str]] = set()
-        for key_node, value_node in node.value:
-            if isinstance(key_node, (ScalarNode, SequenceNode, MappingNode)):
-                identity = (key_node.id, str(key_node.value))
-                if identity in keys:
-                    raise WorkflowLoadError(
-                        f"duplicate YAML key {key_node.value!r} at line {key_node.start_mark.line + 1}"
-                    )
-                keys.add(identity)
-            _check_duplicate_keys(value_node)
-    elif isinstance(node, SequenceNode):
-        for item in node.value:
-            _check_duplicate_keys(item)
+def _check_duplicate_keys(node: Node, active: set[int] | None = None) -> None:
+    """Reject duplicate keys and recursive aliases before loading YAML objects."""
+    if active is None:
+        active = set()
+    identity = id(node)
+    if identity in active:
+        raise WorkflowLoadError("recursive YAML aliases are not supported")
+
+    active.add(identity)
+    try:
+        if isinstance(node, MappingNode):
+            keys: set[tuple[str, str]] = set()
+            for key_node, value_node in node.value:
+                if isinstance(key_node, (ScalarNode, SequenceNode, MappingNode)):
+                    key_identity = (key_node.id, str(key_node.value))
+                    if key_identity in keys:
+                        raise WorkflowLoadError(
+                            f"duplicate YAML key {key_node.value!r} at line {key_node.start_mark.line + 1}"
+                        )
+                    keys.add(key_identity)
+                _check_duplicate_keys(key_node, active)
+                _check_duplicate_keys(value_node, active)
+        elif isinstance(node, SequenceNode):
+            for item in node.value:
+                _check_duplicate_keys(item, active)
+    finally:
+        active.remove(identity)
 
 
 def _index_lines(node: Node, path: tuple[object, ...], out: dict[tuple[object, ...], int]) -> None:
