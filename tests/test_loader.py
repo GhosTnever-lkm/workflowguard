@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from workflowguard.loader import WorkflowLoadError, load_workflow
+from workflowguard.scanner import InputError, scan
 
 
 def test_github_on_key_stays_a_string(tmp_path: Path):
@@ -25,6 +26,21 @@ def test_duplicate_mapping_key_is_rejected(tmp_path: Path):
     file.write_text("on: push\non: pull_request\n", encoding="utf-8")
     with pytest.raises(WorkflowLoadError, match="duplicate YAML key"):
         load_workflow(file, "ci.yml")
+
+
+def test_recursive_yaml_alias_is_rejected_with_actionable_error(tmp_path: Path):
+    file = tmp_path / "recursive.yml"
+    file.write_text("jobs: &jobs\n  build: *jobs\n", encoding="utf-8")
+    with pytest.raises(WorkflowLoadError, match="recursive YAML aliases are not supported"):
+        load_workflow(file, "recursive.yml")
+
+
+def test_scan_reports_recursive_yaml_alias_as_input_error(tmp_path: Path):
+    workflow_dir = tmp_path / ".github" / "workflows"
+    workflow_dir.mkdir(parents=True)
+    (workflow_dir / "recursive.yml").write_text("jobs: &jobs\n  build: *jobs\n", encoding="utf-8")
+    with pytest.raises(InputError, match="recursive YAML aliases are not supported"):
+        scan(tmp_path)
 
 
 def test_malformed_yaml_is_rejected(tmp_path: Path):
