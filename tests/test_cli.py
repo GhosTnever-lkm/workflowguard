@@ -73,3 +73,11 @@ def test_unicode_and_spaces_in_scan_path(tmp_path: Path, capsys):
     make_repo(repo, "on: push\npermissions: read-all\njobs: {}\n")
     assert main(["scan", str(repo)]) == 0
     assert "scanned 1" in capsys.readouterr().out
+
+def test_readme_action_pins_match_workflows():
+    readme = Path("README.md").read_text(encoding="utf-8")
+    for action in ("actions/checkout@", "actions/setup-python@"):
+        documented = next(line.strip() for line in readme.splitlines() if line.strip().startswith("- uses: " + action))
+        for workflow in (".github/workflows/ci.yml", ".github/workflows/release.yml"):
+            configured = next(line.strip() for line in Path(workflow).read_text(encoding="utf-8").splitlines() if line.strip().startswith("- uses: " + action))
+            assert documented.removeprefix("- ") == configured.removeprefix("- "), workflow
